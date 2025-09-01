@@ -1,0 +1,176 @@
+
+
+services:
+  # -------------------- DATABASE --------------------
+  patient-db:
+    image: postgres:15
+    container_name: patient-db
+    environment:
+      POSTGRES_DB: patient_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5439:5432"   # exposed for pgAdmin/IntelliJ
+    networks:
+      - patient-network
+
+  auth-db:
+    image: postgres:15
+    container_name: auth-db
+    restart: always
+    environment:
+      POSTGRES_DB: AUTH_DB
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5440:5432"
+    networks:
+      - patient-network
+
+  bill-db:
+    image: postgres:15
+    container_name: bill-db
+    environment:
+      POSTGRES_DB: bill_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5441:5432"   # exposed for pgAdmin/IntelliJ
+    networks:
+      - patient-network
+
+
+
+  # -------------------- KAFKA --------------------
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - patient-network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"     # internal broker
+      - "29092:29092"   # external broker (host access)
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+
+
+    networks:
+      - patient-network
+
+  # -------------------- PATIENT SERVICE --------------------
+  patient-service:
+    build: ./patient-service
+    container_name: patient-service
+    depends_on:
+      - patient-db
+      - kafka
+      - billing-service
+    ports:
+      - "8088:8088"   # REST
+      - "9000:9000"
+
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://patient-db:5432/patient_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: root
+
+
+      # gRPC configs
+      BILLING_SERVICE_ADDRESS: billing-service
+      BILLING_SERVICE_GRPC_PORT: 9001
+
+      # Kafka config
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    networks:
+      - patient-network
+
+  # -------------------- BILLING SERVICE --------------------
+  billing-service:
+    build: ./billing-service
+    container_name: billing-service
+    depends_on:
+      - kafka
+    ports:
+      - "8089:8089"
+      - "9001:9001"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    networks:
+      - patient-network
+
+  # -------------------- ANALYTICS SERVICE --------------------
+
+  analytics-service:
+    build: ./analytics-service
+    container_name: analytics-service
+    depends_on:
+      - patient-service
+      - kafka
+    ports:
+      - "8090:8090"
+      - "9003:9003"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    networks:
+      - patient-network
+
+   # ------------------ AUTHENTICATION SERVICE --------------------
+
+  auth-service:
+          build: ./Authentication-Service
+          container_name: auth-service
+          restart: always
+          environment:
+            - SPRING_DATASOURCE_URL=jdbc:postgresql://auth-db:5432/AUTH_DB
+            - SPRING_DATASOURCE_USERNAME=postgres
+            - SPRING_DATASOURCE_PASSWORD=root
+            - JWT_SECRET=mysupersecretkeythatismorethan32characterslongok
+          ports:
+            - "8091:8091"
+          depends_on:
+            - auth-db
+          networks:
+            - patient-network
+
+
+    # -------------------- GATEWAY --------------------
+    # API Gateway
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8000:8000"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SERVER_PORT=8000
+      - auth.service.url=http://auth-service:8091
+    depends_on:
+      - patient-service
+      - auth-service
+      - billing-service
+    networks:
+      - patient-network
+# -------------------- NETWORK --------------------
+networks:
+  patient-network:
+    driver: bridge
