@@ -1,0 +1,337 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>PM System – Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="dashboard.css" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="app-bg">
+
+  <div class="layout">
+   
+    <aside class="sidebar glass">
+      <div class="sidebar-brand"> -->
+        <!-- <div class="brand-logo small">🌀</div> -->
+
+        <!-- Animated SVG logo (recommended) -->
+<!-- <a class="brand-logo" href="#">
+  <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PM System Logo" preserveAspectRatio="xMidYMid meet">
+    <defs>
+      <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#6d9dff"/>
+        <stop offset="100%" stop-color="#00c6fb"/>
+      </linearGradient>
+    </defs> -->
+    <!-- Ring -->
+    <!-- <circle class="ring" cx="50" cy="50" r="40" stroke="url(#g)" stroke-width="8" fill="none"/> -->
+    <!-- Medical cross -->
+    <!-- <g class="cross">
+      <rect x="45" y="30" width="10" height="40" rx="2" fill="white"/>
+      <rect x="30" y="45" width="40" height="10" rx="2" fill="white"/>
+    </g>
+  </svg>
+</a>
+
+
+
+
+        <h2>Patient Management</h2>
+      </div>
+
+      <nav class="nav">
+        <a class="nav-link active" href="#">Patients</a>
+        <a class="nav-link muted" href="#" title="Demo link">Appointments</a>
+        <a class="nav-link muted" href="#" title="Demo link">Billing</a>
+        <a class="nav-link muted" href="#" title="Demo link">Analytics</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-pill">
+          <div class="avatar">👤</div>
+          <div class="user-info">
+            <div id="user-role" class="user-email">user@example.com</div>
+            <div class="user-muted">Signed in</div>
+          </div>
+        </div>
+        <button id="logout-btn" class="btn danger w-100">Logout</button>
+      </div>
+    </aside>
+
+    < Main -->
+    <!-- <main class="content">
+      <header class="content-header">
+        <div>
+          <h1>Patients</h1>
+          <p class="muted">Manage patient records, add new patients, and update details.</p>
+        </div>
+        <div class="header-actions">
+          <div class="search">
+            <svg width="18" height="18" viewBox="0 0 24 24" class="icon">
+              <path d="M21 21l-4.3-4.3m1.8-5.2a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <input id="search-input" type="text" placeholder="Search patients..." />
+          </div>
+          <button id="add-patient-btn" class="btn primary">
+            + Add Patient
+          </button>
+        </div>
+      </header>
+
+      <section class="card glass">
+      <div id="patients-grid" class="patients-grid">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th class="hide-sm">Email</th>
+                <th>Address</th>
+                <th class="hide-sm">DOB</th>
+                <th class="hide-sm">Registered</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="patients-body"></tbody>
+          </table>
+          <div id="no-results" class="empty" style="display:none;">
+            <div class="empty-emoji">🩺</div>
+            <div class="empty-title">No patients found</div>
+            <div class="empty-sub">Try adjusting your search or add a new patient.</div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <span class="muted">© <span id="year"></span> PM SYSTEM • LUCKY LIMITED COMPANY • INDIA • CHENNAI </span>
+      </footer>
+    </main>
+  </div> -->
+
+  <!-- Modal -->
+  <!-- <div id="patient-modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal-backdrop" id="close-modal"></div>
+    <div class="modal-dialog glass">
+      <div class="modal-header">
+        <h3 id="modal-title">Add Patient</h3>
+        <button id="close-modal" class="icon-btn" aria-label="Close">&times;</button>
+      </div>
+      <form id="patient-form" class="modal-body">
+        <input type="hidden" id="patient-id" />
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label for="patient-name">Name</label>
+            <input id="patient-name" type="text" placeholder="Jane Doe" required />
+          </div>
+
+          <div class="form-group">
+            <label for="patient-email">Email</label>
+            <input id="patient-email" type="email" placeholder="jane@example.com" required />
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label for="patient-address">Address</label>
+            <input id="patient-address" type="text" placeholder="123 Main St, City" required />
+          </div>
+
+          <div class="form-group">
+            <label for="patient-dob">Date of Birth</label>
+            <input id="patient-dob" type="date" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="patient-registered-date">Registered Date</label>
+          <input id="patient-registered-date" type="date" required />
+        </div>
+
+        <div id="modal-response-msg" class="form-msg"></div>
+
+        <div class="modal-actions">
+          <button type="button" id="cancel-btn" class="btn ghost">Cancel</button>
+          <button type="submit" id="save-btn" class="btn primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+  <script src="dashboard.js"></script>
+</body>
+</html> --> 
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>PM System – Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="dashboard.css" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="app-bg">
+
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar glass">
+    <div class="sidebar-brand">
+      <a class="brand-logo" href="#">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PM System Logo" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#6d9dff"/>
+              <stop offset="100%" stop-color="#00c6fb"/>
+            </linearGradient>
+          </defs>
+          <circle class="ring" cx="50" cy="50" r="40" stroke="url(#g)" stroke-width="8" fill="none"/>
+          <g class="cross">
+            <rect x="45" y="30" width="10" height="40" rx="2" fill="white"/>
+            <rect x="30" y="45" width="40" height="10" rx="2" fill="white"/>
+          </g>
+        </svg>
+      </a>
+      <h2>Patient Management</h2>
+    </div>
+
+    <nav class="nav">
+      <a class="nav-link active" href="#" id="link-patients">Patients</a>
+      <a class="nav-link muted" href="#" title="Demo link">Appointments</a>
+      <a class="nav-link muted" href="#" id="link-billing">Billing</a>
+      <a class="nav-link muted" href="#" id="link-analytics">Analytics</a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-pill">
+        <div class="avatar">👤</div>
+        <div class="user-info">
+          <div id="user-role" class="user-email">user@example.com</div>
+          <div class="user-muted">Signed in</div>
+        </div>
+      </div>
+      <button id="logout-btn" class="btn danger w-100">Logout</button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="content" id="main-content">
+
+    <!-- Patients Page -->
+    <section id="patients-page" class="page">
+      <header class="content-header">
+        <div>
+          <h1>Patients</h1>
+          <p class="muted">Manage patient records, add new patients, and update details.</p>
+        </div>
+        <div class="header-actions">
+          <div class="search">
+            <svg width="18" height="18" viewBox="0 0 24 24" class="icon">
+              <path d="M21 21l-4.3-4.3m1.8-5.2a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <input id="search-input" type="text" placeholder="Search patients..." />
+          </div>
+          <button id="add-patient-btn" class="btn primary">+ Add Patient</button>
+        </div>
+      </header>
+
+      <section class="card glass">
+        <div id="patients-grid" class="patients-grid"></div>
+        <div id="no-results" class="empty" style="display:none;">
+          <div class="empty-emoji">🩺</div>
+          <div class="empty-title">No patients found</div>
+          <div class="empty-sub">Try adjusting your search or add a new patient.</div>
+        </div>
+      </section>
+    </section>
+
+    <!-- Billing Page -->
+    <section id="billing-page" class="page" style="display:none;">
+      <h2>Billing Dashboard</h2>
+      <p>Demo billing content. Replace with real data later.</p>
+    </section>
+
+    <!-- Analytics Page -->
+    <section id="analytics-page" class="page" style="display:none;">
+      <h2>Analytics Dashboard</h2>
+      <div class="analytics-toggle">
+        <button id="weekly-btn" class="btn ghost active">Weekly</button>
+        <button id="monthly-btn" class="btn ghost">Monthly</button>
+      </div>
+      <div class="analytics-cards">
+        <div class="card glass">
+          <h3>Users</h3>
+          <div id="users-chart" class="bar-chart"></div>
+        </div>
+        <div class="card glass">
+          <h3>Sessions</h3>
+          <div id="sessions-chart" class="bar-chart"></div>
+        </div>
+        <div class="card glass">
+          <h3>Conversion</h3>
+          <div id="conversion-chart" class="line-chart"></div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <span class="muted">© <span id="year"></span> PM SYSTEM • LUCKY LIMITED COMPANY • INDIA • CHENNAI </span>
+    </footer>
+
+  </main>
+</div>
+
+<!-- Modal -->
+<div id="patient-modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+  <div class="modal-backdrop" id="close-modal"></div>
+  <div class="modal-dialog glass">
+    <div class="modal-header">
+      <h3 id="modal-title">Add Patient</h3>
+      <button id="close-modal" class="icon-btn" aria-label="Close">&times;</button>
+    </div>
+    <form id="patient-form" class="modal-body">
+      <input type="hidden" id="patient-id" />
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="patient-name">Name</label>
+          <input id="patient-name" type="text" placeholder="Jane Doe" required />
+        </div>
+        <div class="form-group">
+          <label for="patient-email">Email</label>
+          <input id="patient-email" type="email" placeholder="jane@example.com" required />
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="patient-address">Address</label>
+          <input id="patient-address" type="text" placeholder="123 Main St, City" required />
+        </div>
+        <div class="form-group">
+          <label for="patient-dob">Date of Birth</label>
+          <input id="patient-dob" type="date" required />
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="patient-registered-date">Registered Date</label>
+        <input id="patient-registered-date" type="date" required />
+      </div>
+      <div id="modal-response-msg" class="form-msg"></div>
+      <div class="modal-actions">
+        <button type="button" id="cancel-btn" class="btn ghost">Cancel</button>
+        <button type="submit" id="save-btn" class="btn primary">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+<script src="dashboard.js"></script>
+</body>
+</html>
